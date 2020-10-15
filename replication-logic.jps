@@ -87,6 +87,7 @@ actions:
     - cmd[${this.id}]: |-
         service glusterd stop; GLUSTER_PROCESS=$(ps aux|grep gluster|grep -v grep|awk '{print $2}');
         [ -n "${GLUSTER_PROCESS}" ] && kill -9 ${GLUSTER_PROCESS};
+        mountpoint -q ${globals.replicatedPath} || { umount -l ${globals.replicatedPath}; systemctl restart rpcbind; }
         rm -rf /var/lib/glusterd/;
       user: root
 
