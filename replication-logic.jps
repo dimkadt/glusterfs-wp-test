@@ -53,7 +53,7 @@ onAfterMigrate:
 
 actions:
   initiateGlusterFSCluster:
-    - cmd[storage]: umount ${globals.replicatedPath} || true;
+    - cmd[storage]: umount ${globals.replicatedPath} || true; ls -l /data || true;
     - environment.file.read: 
         nodeId: ${nodes.storage.master.id}
         path: /etc/exports
