@@ -85,7 +85,7 @@ actions:
 
   cleanupNode:
     - cmd[${this.id}]: |-
-        mountpoint -q ${globals.replicatedPath} || { systemctl restart nfs-server ; umount ${globals.replicatedPath}; }
+        mountpoint -q ${globals.replicatedPath} || { systemctl stop data.automount ; umount ${globals.replicatedPath}; }
         service glusterd stop; GLUSTER_PROCESS=$(ps aux|grep gluster|grep -v grep|awk '{print $2}');
         [ -n "${GLUSTER_PROCESS}" ] && kill -9 ${GLUSTER_PROCESS};
         sed -i '/glusterfs/d' /etc/fstab;
