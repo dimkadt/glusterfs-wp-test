@@ -55,7 +55,7 @@ onAfterMigrate:
 
 actions:
   initiateGlusterFSCluster:
-    - cmd[storage]: systemctl stop data.automount; systemctl stop data.mount; umount ${globals.replicatedPath} || true;
+    - cmd[storage]: sudo systemctl stop $(systemd-escape -p --suffix=automount ${globals.replicatedPath}); umount ${globals.replicatedPath} || true;
     - environment.file.read:
         nodeId: ${nodes.storage.master.id}
         path: /etc/exports
@@ -87,7 +87,6 @@ actions:
 
   cleanupNode:
     - cmd[${this.id}]: |-
-        umount ${globals.replicatedPath} || true;
         service glusterd stop; GLUSTER_PROCESS=$(ps aux|grep gluster|grep -v grep|awk '{print $2}');
         [ -n "${GLUSTER_PROCESS}" ] && kill -9 ${GLUSTER_PROCESS};
         sed -i '/glusterfs/d' /etc/fstab;
