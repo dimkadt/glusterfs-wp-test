@@ -6,6 +6,8 @@ description:
   short: GlusterFS Cluster Replication Logic (Beta)
 name: GlusterFS Cluster Replication Logic
 
+targetNodes: none
+
 globals:
   replicatedPath: ${settings.replicatedPath:/data}
 
@@ -53,7 +55,7 @@ onAfterMigrate:
 
 actions:
   initiateGlusterFSCluster:
-    - cmd[storage]: umount ${globals.replicatedPath} || true; ls -l /data || true;
+    - cmd[storage]: umount ${globals.replicatedPath} || true;
     - environment.file.read:
         nodeId: ${nodes.storage.master.id}
         path: /etc/exports
@@ -85,7 +87,7 @@ actions:
 
   cleanupNode:
     - cmd[${this.id}]: |-
-        systemctl stop data.automount ;systemctl stop data.mount; umount ${globals.replicatedPath};
+        umount ${globals.replicatedPath} || true;
         service glusterd stop; GLUSTER_PROCESS=$(ps aux|grep gluster|grep -v grep|awk '{print $2}');
         [ -n "${GLUSTER_PROCESS}" ] && kill -9 ${GLUSTER_PROCESS};
         sed -i '/glusterfs/d' /etc/fstab;
